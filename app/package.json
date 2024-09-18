@@ -1,0 +1,29 @@
+{
+  "name": "garage-management",
+  "version": "1.0.0",
+  "description": "A management system for garage operations",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vulpand/garage-management.git"
+  },
+  "keywords": [
+    "garage",
+    "management",
+    "nodejs"
+  ],
+  "author": "Vulpe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vulpand/garage-management/issues"
+  },
+  "homepage": "https://github.com/vulpand/garage-management#readme",
+  "dependencies": {
+    "express": "^4.21.0",
+    "mongoose": "^8.6.3"
+  }
+}

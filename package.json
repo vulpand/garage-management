@@ -1,0 +1,32 @@
+{
+  "name": "garage-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vulpand/garage-management.git"
+  },
+  "keywords": [],
+  "author": "Vulpe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vulpand/garage-management/issues"
+  },
+  "homepage": "https://github.com/vulpand/garage-management#readme",
+  "dependencies": {
+    "mongoose": "^8.6.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3"
+  }
+}
