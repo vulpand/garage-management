@@ -21,7 +21,6 @@ module.exports = {
     'no-debugger': 'warn', // Warn when using the debugger statement
     'no-var': 'error', // Disallow var, encourage let/const usage
     'prefer-const': 'error', // Prefer const for variables that are not reassigned
-    'arrow-parens': ['error', 'as-needed'], // Require parentheses only when needed in arrow functions
     'prefer-arrow-callback': 'error' // Prefer arrow functions as callbacks
   }
 };
