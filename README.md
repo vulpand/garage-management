@@ -18,6 +18,6 @@ docker-compose up
 
 3. Access the Services
 Main Application: Access the main application at 
-http://localhost:3000.
+http://localhost:5000.
 API Service: Access the API service at 
-http://localhost:4000.
+http://localhost:7000.
