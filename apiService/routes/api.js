@@ -3,7 +3,7 @@ const router = express.Router();
 
 const User = require('../models/user');
 const Client = require('../models/client');
-const Car = require('../models/car');
+const Vehicle = require('../models/vehicle');
 const Repair = require('../models/repair');
 const OrderedPart = require('../models/orderedPart');
 
@@ -73,15 +73,31 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
+// Get all clients
+router.get('/clients', async (req, res) => {
+  try {
+    const clients = await Client.find();
+    res.status(200).json(clients);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `Error fetching clients: ${error.message}` });
+  }
+});
+
 // Create Client
 router.post('/clients', async (req, res) => {
   try {
-    const { user, phoneNumber } = req.body;
-    if (!user) {
-      return res.status(400).json({ message: 'User reference is required' });
+    const { name, phoneNumber, email } = req.body;
+    if (!name) {
+      return res.status(400).json({ message: 'Name reference is required' });
     }
     if (!phoneNumber) {
       return res.status(400).json({ message: 'Phone reference is required' });
+    }
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email reference is required' });
     }
     const client = new Client(req.body);
     await client.save();
@@ -140,67 +156,118 @@ router.delete('/clients/:id', async (req, res) => {
   }
 });
 
-// Create Car
-router.post('/cars', async (req, res) => {
+// Get all vehicles
+router.get('/vehicles', async (req, res) => {
   try {
-    const { licensePlate, brand, model, year, mileage, client } = req.body;
-    if (!licensePlate || !brand || !model || !year || !mileage || !client) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
-    const car = new Car(req.body);
-    await car.save();
-    res.status(201).json({ message: 'Car created successfully', car });
+    const vehicles = await Vehicle.find();
+    res.status(200).json(vehicles);
   } catch (error) {
-    res.status(500).json({ message: `Error creating car: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error fetching vehicles: ${error.message}` });
   }
 });
 
-// Read Car by ID
-router.get('/cars/:id', async (req, res) => {
+// Create Vehicle
+router.post('/vehicles', async (req, res) => {
   try {
-    const car = await Car.findById(req.params.id).exec();
-    if (!car) {
-      return res.status(404).json({ message: 'Car not found' });
+    const { licensePlate, brand, model, year, mileage, clientId } = req.body;
+
+    // Validate input fields
+    if (!licensePlate || !brand || !model || !year || !mileage || !clientId) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
-    res.status(200).json(car);
+
+    // Find the client by ID
+    const client = await Client.findById(clientId);
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    const vehicle = new Vehicle({
+      licensePlate,
+      brand,
+      model,
+      year,
+      mileage,
+      client: client._id
+    });
+
+    const savedVehicle = await vehicle.save();
+
+    client.vehicles.push(savedVehicle._id);
+    await client.save();
+
+    res
+      .status(201)
+      .json({ message: 'Vehicle created successfully', vehicle: savedVehicle });
   } catch (error) {
-    res.status(500).json({ message: `Error fetching car: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error creating vehicle: ${error.message}` });
   }
 });
 
-// Update Car
-router.put('/cars/:id', async (req, res) => {
+// Read Vehicle by ID
+router.get('/vehicles/:id', async (req, res) => {
   try {
-    const car = await Car.findByIdAndUpdate(req.params.id, req.body, {
+    const vehicle = await Vehicle.findById(req.params.id).exec();
+    if (!vehicle) {
+      return res.status(404).json({ message: 'Vehicle not found' });
+    }
+    res.status(200).json(vehicle);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `Error fetching vehicle: ${error.message}` });
+  }
+});
+
+// Update Vehicle
+router.put('/vehicles/:id', async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findByIdAndUpdate(req.params.id, req.body, {
       new: true
     }).exec();
-    if (!car) {
-      return res.status(404).json({ message: 'Car not found' });
+    if (!vehicle) {
+      return res.status(404).json({ message: 'Vehicle not found' });
     }
-    res.status(200).json({ message: 'Car updated successfully', car });
+    res.status(200).json({ message: 'Vehicle updated successfully', vehicle });
   } catch (error) {
-    res.status(500).json({ message: `Error updating car: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error updating vehicle: ${error.message}` });
   }
 });
 
-// Delete Car
-router.delete('/cars/:id', async (req, res) => {
+// Delete Vehicle
+router.delete('/vehicles/:id', async (req, res) => {
   try {
-    const car = await Car.findByIdAndDelete(req.params.id).exec();
-    if (!car) {
-      return res.status(404).json({ message: 'Car not found' });
+    const vehicle = await Vehicle.findByIdAndDelete(req.params.id).exec();
+    if (!vehicle) {
+      return res.status(404).json({ message: 'Vehicle not found' });
     }
-    res.status(200).json({ message: 'Car deleted successfully' });
+    res.status(200).json({ message: 'Vehicle deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: `Error deleting car: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error deleting vehicle: ${error.message}` });
   }
 });
 
 // Create Repair
 router.post('/repairs', async (req, res) => {
   try {
-    const { car, startDate, description, cost, status, mechanic } = req.body;
-    if (!car || !startDate || !description || !cost || !status || !mechanic) {
+    const { vehicle, startDate, description, cost, status, mechanic } =
+      req.body;
+    if (
+      !vehicle ||
+      !startDate ||
+      !description ||
+      !cost ||
+      !status ||
+      !mechanic
+    ) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
     const repair = new Repair(req.body);
@@ -217,7 +284,7 @@ router.post('/repairs', async (req, res) => {
 router.get('/repairs/:id', async (req, res) => {
   try {
     const repair = await Repair.findById(req.params.id)
-      .populate('car mechanic orderedParts')
+      .populate('vehicle mechanic orderedParts')
       .exec();
     if (!repair) {
       return res.status(404).json({ message: 'Repair not found' });

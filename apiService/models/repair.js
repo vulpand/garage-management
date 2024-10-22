@@ -1,22 +1,26 @@
 const mongoose = require('mongoose');
 
 const repairSchema = new mongoose.Schema({
-  car: { type: mongoose.Schema.Types.ObjectId, ref: 'Car', required: true }, // Reference to the Car being repaired
-  startDate: { type: Date, required: true }, // Repair start date
-  endDate: { type: Date }, // Repair end date (optional)
-  description: { type: String, required: true }, // Description of the repair work
-  cost: { type: Number, required: true }, // Cost of the repair
+  vehicle: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vehicle',
+    required: true
+  },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date },
+  description: { type: String, required: true },
+  cost: { type: Number, required: true },
   status: {
     type: String,
     enum: ['Pending', 'In Progress', 'Completed'],
     required: true
-  }, // Status of the repair
+  },
   mechanic: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }, // Reference to the mechanic
-  orderedParts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderedPart' }] // References to ordered parts for this repair
+  },
+  orderedParts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderedPart' }]
 });
 
 const Repair = mongoose.model('Repair', repairSchema);
