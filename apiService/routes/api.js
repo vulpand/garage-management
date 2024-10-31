@@ -81,7 +81,7 @@ router.delete('/users/:id', async (req, res) => {
 // Get all
 router.get('/clients', async (req, res) => {
   try {
-    const clients = await Client.find();
+    const clients = await Client.find().populate('vehicles', 'licensePlate');
     res.status(200).json(clients);
   } catch (error) {
     res
@@ -268,7 +268,7 @@ router.delete('/appointments/:id', async (req, res) => {
 // Get all
 router.get('/vehicles', async (req, res) => {
   try {
-    const vehicles = await Vehicle.find();
+    const vehicles = await Vehicle.find().populate('client', 'name');
     res.status(200).json(vehicles);
   } catch (error) {
     res
