@@ -3,8 +3,13 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth');
-const apiRoutes = require('./routes/api');
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const clientRoutes = require('./routes/clientRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes');
+const repairRoutes = require('./routes/repairRoutes');
+const orderedPartRoutes = require('./routes/orderedPartRoutes');
 const MongoStore = require('connect-mongo');
 const cors = require('cors');
 
@@ -43,7 +48,13 @@ app.use(passport.session());
 app.use('/', authRoutes);
 
 // Use api routes
-app.use('/', apiRoutes);
+app.use('/', userRoutes);
+app.use('/', clientRoutes);
+app.use('/', appointmentRoutes);
+app.use('/', clientRoutes);
+app.use('/', vehicleRoutes);
+app.use('/', repairRoutes);
+app.use('/', orderedPartRoutes);
 
 // Database connection
 if (!process.env.MONGO_URI) {

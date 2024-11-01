@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const { handleOAuthCallback } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const router = express.Router();
@@ -71,34 +72,26 @@ router.post('/auth/login', async (req, res) => {
   }
 });
 
-// Google Authentication Routes
+// Google OAuth
 router.get(
   '/auth/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email']
-  })
+  passport.authenticate('google', { scope: ['profile', 'email'] })
 );
-
 router.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect('/profile'); // Redirect to profile page after successful login
-  }
+  handleOAuthCallback
 );
 
-// Facebook Authentication Routes
+// Facebook OAuth
 router.get(
   '/auth/facebook',
   passport.authenticate('facebook', { scope: ['email'] })
 );
-
 router.get(
   '/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect('/profile'); // Redirect to profile page after successful login
-  }
+  handleOAuthCallback
 );
 
 // Logout Route
